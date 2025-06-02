@@ -6,7 +6,7 @@ export default function FaceMatch() {
   const canvasRef = useRef();
   const [matchedUser, setMatchedUser] = useState(null);
   const [noMatch, setNoMatch] = useState(false);
-  const matchIntervalRef = useRef(null); // track interval
+  const matchIntervalRef = useRef(null);
 
   useEffect(() => {
     const loadModelsAndStart = async () => {
@@ -15,12 +15,16 @@ export default function FaceMatch() {
       await faceapi.nets.faceRecognitionNet.loadFromUri("/models/face_recognition");
       console.log("✅ Models loaded");
 
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        videoRef.current.autoplay = true;
-        videoRef.current.playsInline = true;
-        await videoRef.current.play();
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+          videoRef.current.autoplay = true;
+          videoRef.current.playsInline = true;
+          await videoRef.current.play();
+        }
+      } catch (err) {
+        console.error("❌ Error accessing webcam:", err);
       }
     };
 
@@ -73,13 +77,7 @@ export default function FaceMatch() {
               console.log("🎯 First match found:", result.label);
               setMatchedUser(result.label);
               setNoMatch(false);
-              clearInterval(matchIntervalRef.current); // ✅ Stop further matching
-
-              // Optionally restart matching after 30 seconds:
-              // setTimeout(() => {
-              //   setMatchedUser(null);
-              //   matchIntervalRef.current = setInterval(...);
-              // }, 30000);
+              clearInterval(matchIntervalRef.current);
             }
           } else {
             setNoMatch(true);
@@ -89,13 +87,21 @@ export default function FaceMatch() {
       }, 2000);
     };
 
-    videoRef.current?.addEventListener("play", handlePlay);
+    const video = videoRef.current;
+    if (video) {
+      video.addEventListener("play", handlePlay);
+    }
 
-    return () => clearInterval(matchIntervalRef.current);
+    return () => {
+      clearInterval(matchIntervalRef.current);
+      if (video) {
+        video.removeEventListener("play", handlePlay);
+      }
+    };
   }, [matchedUser]);
 
   const loadLabeledImages = async () => {
-    const labels = ["user1", "user2"];
+    const labels = ["user1", "user2", "user3", "user4"];
     return Promise.all(
       labels.map(async (label) => {
         try {
@@ -116,17 +122,14 @@ export default function FaceMatch() {
           return null;
         }
       })
-    ).then((desc) => desc.filter(Boolean));
+    ).then(desc => desc.filter(Boolean));
   };
 
   const dummyUserData = {
     user1: { name: "Bebooo Love You", email: "john@example.com", id: "1" },
     user2: { name: "Deepak", email: "jane@example.com", id: "2" },
-    user3: { name: "Sameer Seo specialist", email: "jane@example.com", id: "3" },
-    user4: { name: "Manger h kyaa", email: "jane@example.com", id: "4" },
-
-
-
+    user3: { name: "Sameer Seo specialist", email: "sameer@example.com", id: "3" },
+    user4: { name: "Manager h kya", email: "manager@example.com", id: "4" },
   };
 
   return (
@@ -143,7 +146,7 @@ export default function FaceMatch() {
         />
       </div>
 
-      {matchedUser && (
+      {matchedUser && dummyUserData[matchedUser] && (
         <div className="card mt-4 p-3 shadow">
           <h4 className="text-success">✅ Match Found</h4>
           <p><strong>Name:</strong> {dummyUserData[matchedUser].name}</p>
