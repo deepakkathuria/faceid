@@ -122,6 +122,8 @@ export default function FaceMatch() {
   const dummyUserData = {
     user1: { name: "kiran", email: "john@example.com", id: "1" },
     user2: { name: "Deepak", email: "jane@example.com", id: "2" },
+    user3: { name: "Bebu Diksha kathuria ", email: "jane@example.com", id: "2" },
+
   };
 
   return (
