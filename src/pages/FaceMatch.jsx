@@ -101,7 +101,7 @@ export default function FaceMatch() {
   }, [matchedUser]);
 
   const loadLabeledImages = async () => {
-    const labels = ["user1", "user2", "user3", "user4"];
+    const labels = ["user1", "user2", "user3", "user4","user5"];
     return Promise.all(
       labels.map(async (label) => {
         try {
@@ -125,12 +125,14 @@ export default function FaceMatch() {
     ).then(desc => desc.filter(Boolean));
   };
 
-  const dummyUserData = {
-    user1: { name: "Bebooo Love You", email: "john@example.com", id: "1" },
-    user2: { name: "Deepak", email: "jane@example.com", id: "2" },
-    user3: { name: "Sameer Seo specialist", email: "sameer@example.com", id: "3" },
-    user4: { name: "Manager h kya", email: "manager@example.com", id: "4" },
-  };
+const dummyUserData = {
+  user1: { name: "Bebooo Love You", email: "john@example.com", id: "1" },
+  user2: { name: "Deepak", email: "jane@example.com", id: "2" },
+  user3: { name: "Sameer Seo specialist", email: "sameer@example.com", id: "3" },
+  user4: { name: "Manager h kya", email: "manager@example.com", id: "4" },
+  user5: { name: "Mohnish don h kyaaaaaaaaaa", email: "mohnish@example.com", id: "5" }, // ✅ added this line
+};
+
 
   return (
     <div className="container py-4 text-center">
